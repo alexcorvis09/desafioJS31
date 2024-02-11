@@ -1,4 +1,3 @@
-
 /* eslint-disable no-unneeded-ternary */
 import { allPost } from './database.js'
 
@@ -6,12 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let btnSubmit = document.querySelector("#submitButton")
   let postContent = document.querySelector("#postContent")
   let postTitle = document.querySelector("#postTitle")
-  let updateButton = document.querySelector("#updateButton")
-  let deleteButton = document.querySelector("#deleteButton")
+  // let buttonEdit = document.getElementById("#editButton")
+  // let deleteButton = document.querySelector("#deleteButton")
   let msgContent = document.querySelector("#msgContent")
-  let postPublisher = document.querySelector ("#actualPosts")
-  let postHeader =document.querySelector("#postHeader")
-  let postText =document.querySelector("#postText")
+  
+
   
   btnSubmit.addEventListener('click', (event) => {
       event.preventDefault()
@@ -32,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 let resetForm = () =>{
-      // debugger
       postTitle.value=""
       postContent.value=""
   }
@@ -49,7 +46,7 @@ let resetForm = () =>{
       console.log("Este es el post", posts)
   }
 
-  const publishPost = (pt, pc) =>{
+  const publishPost = (pt, pc, indx) =>{
 
     let p = {};
     p.body = pc;
@@ -57,64 +54,31 @@ let resetForm = () =>{
     p.reactions = 0;
     p.tags = "mytag";
     p.userId = 0;
+    p.indexC = indx,
 
     secondaryCardGen(p, "time", user);
     resetForm()
 
   }
 
-
   const displayAllPosts = () =>{
-      postPublisher.innerHTML=''
-      let postHeaderDiv = document.createElement('div')
-      let postContentDiv = document.createElement('div')
-      postHeaderDiv.id = "postHeader"
-      postContentDiv.id ="postText"
-      postPublisher.appendChild(postHeaderDiv)
-      postPublisher.appendChild(postContentDiv)
-
-      postHeader = postHeaderDiv
-      postText = postContentDiv
-      
-      posts = JSON.parse(localStorage.posts)
+      let stored_posts = localStorage.posts;
+      if( stored_posts === undefined )
+        posts = []
+      else 
+        posts = JSON.parse(localStorage.posts)
       console.log(posts)
-      posts.forEach((post)=>{
-          publishPost(post.title,post.description)
-      })
-      // publishPost()
+      // posts.forEach((post)=>{
+      //     publishPost(post.title,post.description)
+      // })
+      for (let index in posts){
+        publishPost(posts[index].title, posts[index].description, index)
+      }
   }
    displayAllPosts()
-
-  updateButton.addEventListener('click', (e) =>{
-      debugger
-      e.preventDefault()
-      let forEdit = this.parentElement;
-      let input = document.createElement('input');
-      input.type = 'text';
-      input.value = 
+   ////adding update and eliminate function
   
-      forEdit.replaceWith(input);
-  
-      editButton.textContent = 'save';
-  }) 
-      
-  
-
-  deleteButton.addEventListener ('click', (e) =>{
-      e.preventDefault()
-      let deleting = this.parentElement
-      postPublisher.removeChild(deleting)
-  })
-
-  const createButton = (postNumber) =>{
-      let newBUtton = document.createElement("a")
-      newBUtton.id= "updateButton" + postNumber
-  }
-
-
-
-
-  })
+})
 
 /// ///////////Generador de cards///////////////////
 const cardColumn = document.getElementById('cardColumn')
@@ -222,14 +186,42 @@ export const secondaryCardGen = (obj, time, user) => {
   const commentsC = document.createElement('p')
   const date = document.createElement('p')
   const contDate = document.createElement('div')
+  const buttonEdit = document.createElement('a')
+  const buttonEliminate = document.createElement('a')
+  
+  const eliminatePost = ()=>{
+    // let id = indx
+    // debugger
+    // localStorage.removeItem('post ')
+    // console.log("hola")
+    // mainC.remove()
+   }
 
+   const editPost = () =>{
+    console.log("ola2")
+   }
   // reacciones//
   reactionContainer.classList.add('d-flex', 'flex-row', 'p-2')
   reaction.classList.add('mx-2', 'fs-6')
   reaction.innerText = `🤔❤️👍😒Reactions ${reactions}`
   commentsC.classList.add('mx-2', 'f-6', 'text-decoration-none')
   commentsC.innerText = `🗨️ Comments ${user.comment}`
-  reactionContainer.append(reaction, commentsC)
+  buttonEdit.classList.add('mx-2', 'f-6',)
+  buttonEdit.innerText = ("Editar")
+  buttonEdit.id =("buttonEdit")
+  buttonEliminate.classList.add('mx-2', 'f-6')
+  buttonEliminate.innerText = ("Eliminar")
+  buttonEliminate.id=("buttonEliminate")
+  buttonEdit.addEventListener('click', (event) =>{
+      event.preventDefault()
+      editPost()
+  }) 
+  buttonEliminate.addEventListener ('click', (e) =>{
+    e.preventDefault()
+    eliminatePost()
+  })
+  reactionContainer.append(reaction, commentsC,buttonEdit, buttonEliminate)
+
 
   // hashtags//
   hashTagsContainer.classList.add('pl-5')
@@ -248,7 +240,7 @@ export const secondaryCardGen = (obj, time, user) => {
   infoContainer.classList.add('p-4')
   infoContainer.setAttribute('id', 'openPost')
   infoContainer.append(info, hashTag, reactionContainer)
-
+  
   // icon profile//
   userNameText.classList.add('card-text', 'p-2')
   profilePic.classList.add('card-img-top', 'rounded-circle')
@@ -262,7 +254,7 @@ export const secondaryCardGen = (obj, time, user) => {
   date.innerText = time
   contDate.append(userNameText, date)
   infoUser.append(profilePic, contDate)
-
+  
   // full card//
   mainC.classList.add('card', 'm-1')
   mainC.append(anchor, infoUser, infoContainer)
