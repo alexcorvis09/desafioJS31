@@ -1,5 +1,22 @@
-/* eslint-disable no-unneeded-ternary */
 import { allPost } from './database.js'
+
+const openPost = () => {
+  const cardContainer = document.querySelector('[name="cardContainer"]')
+  const cardContainer2 = document.querySelector('[name="cardContainer2"]')
+  cardContainer.addEventListener('click', () => {
+    window.open('pages/post.html')
+    // añadir la ejecucion de la funcion que crea o introduce la info del dom
+    // de esa pagina
+
+    // añadi que temporalmente regrese el id en consola
+    // para efectos de poder identificar en pruebas cual post esta abriendo
+    return console.log(cardContainer.id)
+  })
+  cardContainer2.addEventListener('click', () => {
+    window.open('pages/post.html')
+    return console.log(cardContainer2.id)
+  })
+}
 
 /// ///////////Generador de cards///////////////////
 const cardColumn = document.getElementById('cardColumn')
@@ -83,13 +100,16 @@ export const mainCardGen = (obj, picture, time, user) => {
   mainC.classList.add('card', 'm-1')
   mainC.append(anchor, infoUser, infoContainer)
   mainC.setAttribute('id', `${id}`)
+  mainC.setAttribute('name', 'cardContainer')
   cardColumn.append(mainC)
-  // openPost(mainC)
+
+  return id
 }
 
+// Generador de Card secundaria
 export const secondaryCardGen = (obj, time, user) => {
   const post = obj
-  const { body, reactions, tags, title, userId } = post
+  const { body, reactions, tags, title, id } = post
 
   const mainC = document.createElement('div')
   const anchor = document.createElement('a')
@@ -151,17 +171,32 @@ export const secondaryCardGen = (obj, time, user) => {
   // full card//
   mainC.classList.add('card', 'm-1')
   mainC.append(anchor, infoUser, infoContainer)
-  mainC.setAttribute('id', `${userId}`)
+  mainC.setAttribute('id', `${id}`)
+  mainC.setAttribute('name', 'cardContainer2')
   cardColumn.append(mainC)
-  // openPost(mainC)
+
+  return id
 }
 
 /* La siguiente funcion muestra una card,
 recibe como parametro un post del array de
 todos los posts */
-const postLSdb = await allPost()
-const post1 = postLSdb[1]
-const post2 = postLSdb[5]
+// const postLSdb = await allPost()
+// const post1 = postLSdb[1]
+// const post2 = postLSdb[5]
+// mainCardGen(post1, cover, date, user)
+// secondaryCardGen(post2, date, user)
+// Las 5 lineas anteriores son para hacer pruebas
 
-mainCardGen(post1, cover, date, user)
-secondaryCardGen(post2, date, user)
+const postFirstShow = async () => {
+  const postsArray = await allPost()
+  const randomOrder = postsArray.map(post => postsArray[Math.floor(Math.random() * postsArray.length)])
+  mainCardGen(randomOrder[0], cover, date, user)
+  randomOrder.shift()
+  randomOrder.forEach((item) => {
+    secondaryCardGen(item, date, user)
+  })
+}
+
+postFirstShow()
+openPost()
