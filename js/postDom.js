@@ -124,8 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
     postContent.value = ''
   }
 
-  let posts = []
-
   const acceptPost = () => {
     posts.push({
       title: postTitle.value,
