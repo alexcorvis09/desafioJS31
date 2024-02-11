@@ -1,6 +1,8 @@
 /* eslint-disable no-unneeded-ternary */
 import { allPost } from './database.js'
 
+let posts = []
+
 document.addEventListener('DOMContentLoaded', () => {
   let btnSubmit = document.querySelector("#submitButton")
   let postContent = document.querySelector("#postContent")
@@ -9,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // let deleteButton = document.querySelector("#deleteButton")
   let msgContent = document.querySelector("#msgContent")
   
-
   
   btnSubmit.addEventListener('click', (event) => {
       event.preventDefault()
@@ -29,12 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
 
-let resetForm = () =>{
+  let resetForm = () =>{
       postTitle.value=""
       postContent.value=""
   }
-
-  let posts = []
 
   let acceptPost = () =>{
       posts.push({
@@ -42,7 +41,9 @@ let resetForm = () =>{
           date: Date.now(),
           description: postContent.value,
       })
+      debugger
       localStorage.setItem('posts', JSON.stringify(posts))
+      debugger
       console.log("Este es el post", posts)
   }
 
@@ -190,11 +191,15 @@ export const secondaryCardGen = (obj, time, user) => {
   const buttonEliminate = document.createElement('a')
   
   const eliminatePost = ()=>{
-    // let id = indx
-    // debugger
-    // localStorage.removeItem('post ')
-    // console.log("hola")
-    // mainC.remove()
+    let id = post.indexC
+    let p = []
+    for(let i in posts){
+      if(i != id)
+        p.push(posts[i])
+    }
+    posts = p
+    localStorage.setItem('posts', JSON.stringify(posts))
+    mainC.remove()
    }
 
    const editPost = () =>{
