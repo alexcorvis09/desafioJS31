@@ -189,7 +189,7 @@ export const secondaryCardGen = (obj, time, user) => {
   const contDate = document.createElement('div')
   const buttonEdit = document.createElement('a')
   const buttonEliminate = document.createElement('a')
-  
+  //p is a temporary array
   const eliminatePost = ()=>{
     let id = post.indexC
     let p = []
