@@ -18,3 +18,5 @@ export const allPost = async () => {
 
   return postsOnDB
 }
+
+console.log("whatever")

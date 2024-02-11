@@ -2,6 +2,120 @@
 /* eslint-disable no-unneeded-ternary */
 import { allPost } from './database.js'
 
+document.addEventListener('DOMContentLoaded', () => {
+  let btnSubmit = document.querySelector("#submitButton")
+  let postContent = document.querySelector("#postContent")
+  let postTitle = document.querySelector("#postTitle")
+  let updateButton = document.querySelector("#updateButton")
+  let deleteButton = document.querySelector("#deleteButton")
+  let msgContent = document.querySelector("#msgContent")
+  let postPublisher = document.querySelector ("#actualPosts")
+  let postHeader =document.querySelector("#postHeader")
+  let postText =document.querySelector("#postText")
+  
+  btnSubmit.addEventListener('click', (event) => {
+      event.preventDefault()
+
+      firstValidation()
+  })
+
+  let firstValidation = () =>{
+      if (postTitle.value == "" || postContent.value==""){
+          msgContent.style.color="red"
+          msgContent.innerHTML = ("Llena todos los campos!")
+      }
+      else {
+          acceptPost()
+          // publishPost(postTitle.value, postContent.value)
+          displayAllPosts()
+      }
+  }
+
+let resetForm = () =>{
+      // debugger
+      postTitle.value=""
+      postContent.value=""
+  }
+
+  let posts = []
+
+  let acceptPost = () =>{
+      posts.push({
+          title: postTitle.value,
+          date: Date.now(),
+          description: postContent.value,
+      })
+      localStorage.setItem('posts', JSON.stringify(posts))
+      console.log("Este es el post", posts)
+  }
+
+  const publishPost = (pt, pc) =>{
+
+    let p = {};
+    p.body = pc;
+    p.title = pt;
+    p.reactions = 0;
+    p.tags = "mytag";
+    p.userId = 0;
+
+    secondaryCardGen(p, "time", user);
+    resetForm()
+
+  }
+
+
+  const displayAllPosts = () =>{
+      postPublisher.innerHTML=''
+      let postHeaderDiv = document.createElement('div')
+      let postContentDiv = document.createElement('div')
+      postHeaderDiv.id = "postHeader"
+      postContentDiv.id ="postText"
+      postPublisher.appendChild(postHeaderDiv)
+      postPublisher.appendChild(postContentDiv)
+
+      postHeader = postHeaderDiv
+      postText = postContentDiv
+      
+      posts = JSON.parse(localStorage.posts)
+      console.log(posts)
+      posts.forEach((post)=>{
+          publishPost(post.title,post.description)
+      })
+      // publishPost()
+  }
+   displayAllPosts()
+
+  updateButton.addEventListener('click', (e) =>{
+      debugger
+      e.preventDefault()
+      let forEdit = this.parentElement;
+      let input = document.createElement('input');
+      input.type = 'text';
+      input.value = 
+  
+      forEdit.replaceWith(input);
+  
+      editButton.textContent = 'save';
+  }) 
+      
+  
+
+  deleteButton.addEventListener ('click', (e) =>{
+      e.preventDefault()
+      let deleting = this.parentElement
+      postPublisher.removeChild(deleting)
+  })
+
+  const createButton = (postNumber) =>{
+      let newBUtton = document.createElement("a")
+      newBUtton.id= "updateButton" + postNumber
+  }
+
+
+
+
+  })
+
 /// ///////////Generador de cards///////////////////
 const cardColumn = document.getElementById('cardColumn')
 const cover = 'https://picsum.photos/600/400'
