@@ -1,5 +1,85 @@
 import { allPost } from './database.js'
 
+let posts = []
+
+document.addEventListener('DOMContentLoaded', () => {
+  let btnSubmit = document.querySelector("#submitButton")
+  let postContent = document.querySelector("#postContent")
+  let postTitle = document.querySelector("#postTitle")
+  // let buttonEdit = document.getElementById("#editButton")
+  // let deleteButton = document.querySelector("#deleteButton")
+  let msgContent = document.querySelector("#msgContent")
+  
+  
+  btnSubmit.addEventListener('click', (event) => {
+      event.preventDefault()
+
+      firstValidation()
+  })
+
+  let firstValidation = () =>{
+      if (postTitle.value == "" || postContent.value==""){
+          msgContent.style.color="red"
+          msgContent.innerHTML = ("Llena todos los campos!")
+      }
+      else {
+          acceptPost()
+          // publishPost(postTitle.value, postContent.value)
+          displayAllPosts()
+      }
+  }
+
+  let resetForm = () =>{
+      postTitle.value=""
+      postContent.value=""
+  }
+
+  let acceptPost = () =>{
+      posts.push({
+          title: postTitle.value,
+          date: Date.now(),
+          description: postContent.value,
+      })
+      debugger
+      localStorage.setItem('posts', JSON.stringify(posts))
+      debugger
+      console.log("Este es el post", posts)
+  }
+
+  const publishPost = (pt, pc, indx) =>{
+
+    let p = {};
+    p.body = pc;
+    p.title = pt;
+    p.reactions = 0;
+    p.tags = "mytag";
+    p.userId = 0;
+    p.indexC = indx,
+
+    secondaryCardGen(p, "time", user);
+    resetForm()
+
+  }
+
+  const displayAllPosts = () =>{
+      let stored_posts = localStorage.posts;
+      if( stored_posts === undefined )
+        posts = []
+      else 
+        posts = JSON.parse(localStorage.posts)
+      console.log(posts)
+      // posts.forEach((post)=>{
+      //     publishPost(post.title,post.description)
+      // })
+      for (let index in posts){
+        publishPost(posts[index].title, posts[index].description, index)
+      }
+  }
+   displayAllPosts()
+   ////adding update and eliminate function
+  
+})
+
 const postsArray = await allPost()
 const randomOrder = postsArray.map(
   (post) => postsArray[Math.floor(Math.random() * postsArray.length)]
@@ -119,14 +199,46 @@ export const secondaryCardGen = (obj, time, user) => {
   const commentsC = document.createElement('p')
   const date = document.createElement('p')
   const contDate = document.createElement('div')
+  const buttonEdit = document.createElement('a')
+  const buttonEliminate = document.createElement('a')
+  //p is a temporary array
+  const eliminatePost = ()=>{
+    let id = post.indexC
+    let p = []
+    for(let i in posts){
+      if(i != id)
+        p.push(posts[i])
+    }
+    posts = p
+    localStorage.setItem('posts', JSON.stringify(posts))
+    mainC.remove()
+   }
 
+   const editPost = () =>{
+    console.log("ola2")
+   }
   // reacciones//
   reactionContainer.classList.add('d-flex', 'flex-row', 'p-2')
   reaction.classList.add('mx-2', 'fs-6')
   reaction.innerText = `🤔❤️👍😒Reactions ${reactions}`
   commentsC.classList.add('mx-2', 'f-6', 'text-decoration-none')
   commentsC.innerText = `🗨️ Comments ${user.comment}`
-  reactionContainer.append(reaction, commentsC)
+  buttonEdit.classList.add('mx-2', 'f-6',)
+  buttonEdit.innerText = ("Editar")
+  buttonEdit.id =("buttonEdit")
+  buttonEliminate.classList.add('mx-2', 'f-6')
+  buttonEliminate.innerText = ("Eliminar")
+  buttonEliminate.id=("buttonEliminate")
+  buttonEdit.addEventListener('click', (event) =>{
+      event.preventDefault()
+      editPost()
+  }) 
+  buttonEliminate.addEventListener ('click', (e) =>{
+    e.preventDefault()
+    eliminatePost()
+  })
+  reactionContainer.append(reaction, commentsC,buttonEdit, buttonEliminate)
+
 
   // hashtags//
   hashTagsContainer.classList.add('pl-5')
@@ -145,7 +257,7 @@ export const secondaryCardGen = (obj, time, user) => {
   infoContainer.classList.add('p-4')
   infoContainer.setAttribute('id', 'openPost')
   infoContainer.append(info, hashTag, reactionContainer)
-
+  
   // icon profile//
   userNameText.classList.add('card-text', 'p-2')
   profilePic.classList.add('card-img-top', 'rounded-circle')
@@ -159,7 +271,7 @@ export const secondaryCardGen = (obj, time, user) => {
   date.innerText = time
   contDate.append(userNameText, date)
   infoUser.append(profilePic, contDate)
-
+  
   // full card//
   mainC.classList.add('card', 'm-1')
   mainC.append(anchor, infoUser, infoContainer)
