@@ -20,7 +20,6 @@ export const allPost = async () => {
   asignado para el nombre del array de postOnLocal. */
   if (postOnLocal === null || postOnLocal === undefined) return postsOnDB
   postsOnDB.concat(postOnLocal)
+
   return postsOnDB
 }
-
-
