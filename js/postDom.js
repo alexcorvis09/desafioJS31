@@ -1,5 +1,14 @@
-/* eslint-disable no-unneeded-ternary */
 import { allPost } from './database.js'
+
+const postsArray = await allPost()
+const randomOrder = postsArray.map(
+  (post) => postsArray[Math.floor(Math.random() * postsArray.length)]
+)
+
+// //////////////// Funcion para abrir los post en la pagina de Post
+export const openPost = (id) => {
+  window.open(`posts.html?id=${id}`, '_blank')
+}
 
 /// ///////////Generador de cards///////////////////
 const cardColumn = document.getElementById('cardColumn')
@@ -83,13 +92,16 @@ export const mainCardGen = (obj, picture, time, user) => {
   mainC.classList.add('card', 'm-1')
   mainC.append(anchor, infoUser, infoContainer)
   mainC.setAttribute('id', `${id}`)
+  mainC.setAttribute('name', 'cardContainer')
   cardColumn.append(mainC)
-  // openPost(mainC)
+
+  return id
 }
 
+// Generador de Card secundaria
 export const secondaryCardGen = (obj, time, user) => {
   const post = obj
-  const { body, reactions, tags, title, userId } = post
+  const { body, reactions, tags, title, id } = post
 
   const mainC = document.createElement('div')
   const anchor = document.createElement('a')
@@ -151,17 +163,26 @@ export const secondaryCardGen = (obj, time, user) => {
   // full card//
   mainC.classList.add('card', 'm-1')
   mainC.append(anchor, infoUser, infoContainer)
-  mainC.setAttribute('id', `${userId}`)
+  mainC.setAttribute('id', `${id}`)
+  mainC.setAttribute('name', 'cardContainer2')
   cardColumn.append(mainC)
-  // openPost(mainC)
+
+  return console.log(id)
 }
 
-/* La siguiente funcion muestra una card,
-recibe como parametro un post del array de
-todos los posts */
-const postLSdb = await allPost()
-const post1 = postLSdb[1]
-const post2 = postLSdb[5]
+const postFirstShow = () => {
+  randomOrder.forEach((item) => {
+    secondaryCardGen(item, date, user)
+  })
+}
 
-mainCardGen(post1, cover, date, user)
-secondaryCardGen(post2, date, user)
+mainCardGen(postsArray[0], cover, date, user)
+postFirstShow()
+
+document.addEventListener('DOMContentLoaded', () => {
+  const mainC = document.getElementById('mainC')
+  const id = mainC.id
+  mainC.addEventListener('click', () => {
+    openPost(id)
+  })
+})
