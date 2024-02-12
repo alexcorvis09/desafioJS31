@@ -8,5 +8,3 @@ const posts = await allPost()
 const fecha =  aleatoryDate()
 const fechaPost =  postWDate()
 
-console.log(fecha)
-console.log(fechaPost)

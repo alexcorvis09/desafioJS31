@@ -1,15 +1,6 @@
-import { getPosts } from './database.js'
+import { allPost } from './database.js'
 
-// /* Los post no tienen fecha, hay que simular fechas con alguna funcion para añadirle
-// de forma aleatoria una fecha */
-
-//pasamos los post a local
-
- 
-/**  1. Creamos funcion fecha aleatoria */
-
-// obtenemos la fechaRandom.. perooo menor a la actual 
-// quitar export..
+/**  1. Creamos funcion fecha aleatoria para los post */
 export const aleatoryDate = () => {
 
     // Fecha actual
@@ -38,23 +29,41 @@ export const aleatoryDate = () => {
     return randomDate;
 }
 
+const postsOrigin = await allPost()
 
-// for (const [key, value] of Object.entries(object1)) {
-//     console.log(`${key}: ${value}`);
-//   }
-
-const postsOrigin = await getPosts()
-
+/* Metemos la fecha random a los posts que llegan de la api */
 export const postWDate = () => {
 
     const newPostDates = {
-        ...postsOrigin
+        ...postsOrigin,
     }
 
-    Object.keys(newPostDates).forEach(function(clave) {
-        console.log("Clave:", clave, "Valor:", newPostDates[clave]);
-    });
+    const lenPost =( Object.keys(postsOrigin).length ) - 1
+    let cont = 1
+    Object.entries(newPostDates).forEach((([key, value]) => {
+        if(cont <= lenPost){
+        newPostDates[key]["date"] = aleatoryDate();
+       console.log("Clave:", cont," de: ",lenPost, "Valor:", value );
+        cont++
+        }
+    }))
+    // console.log("///////////////postOrigin///////////////////////");
+    // console.log(postsOrigin);
+
+    // guardar obj en localSt
+    const myPost = JSON.stringify(newPostDates)
+    // console.log(typeof myPost);
+    localStorage.setItem("postApiDateLocal", myPost )
 
     return newPostDates;
-
 }
+
+//falta meter la fecha - LISTO
+//falta guardar obj - LISTO
+//falta guardar obj en local - LISTO
+
+// -----cargar la pagina y revisar el push - no funciona
+// -----hacer pull
+// -----hacer push
+// -----guardar en local 
+// -----trsbajr btns  
